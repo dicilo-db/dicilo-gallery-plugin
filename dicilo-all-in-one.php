@@ -2,8 +2,8 @@
 /**
  * Plugin Name: Dicilo Gallery All-in-One
  * Plugin URI: https://dicilo.net
- * Description: Sistema de galería con formatos (1:1, 4:5, 16:9), Carrusel Automático/Manual, Compresión WebP en subidas y actualizaciones remotas.
- * Version: 3.1.1
+ * Description: Galería Multilingüe (DE, EN, ES), Formatos de imagen, Carrusel Automático, Compresión WebP y GitHub Updater.
+ * Version: 3.2.0
  * Author: Dicilo Architect
  * Author URI: https://dicilo.net
  * Text Domain: dicilo-gallery
@@ -148,6 +148,8 @@ if ( ! class_exists( 'Dicilo_Gallery_Plugin' ) ) {
                 .dicilo-image-row { background: #f9f9f9; border: 1px solid #ccd0d4; padding: 15px; margin-bottom: 15px; position: relative; }
                 .dicilo-remove-row { color: #d63638; position: absolute; top: 15px; right: 15px; font-weight: bold; text-decoration: none; }
                 .dicilo-preview-img { max-width: 100px; display: block; margin-top: 10px; }
+                .dicilo-flex-row { display: flex; gap: 10px; margin-top: 10px; }
+                .dicilo-flex-col { flex: 1; }
             </style>
 
             <div class="dicilo-config-bar">
@@ -193,12 +195,44 @@ if ( ! class_exists( 'Dicilo_Gallery_Plugin' ) ) {
                     <h4>Imagen #<span class="row-num"><?php echo $index + 1; ?></span></h4>
                     <a href="#" class="dicilo-remove-row">Eliminar</a>
                     <p>
-                        <input type="text" name="dicilo_gallery_images[<?php echo $index; ?>][url]" value="<?php echo esc_attr( $image['url'] ); ?>" class="dicilo-url-input" style="width: 70%;" />
+                        <label><strong>URL de la Imagen:</strong></label><br>
+                        <input type="text" name="dicilo_gallery_images[<?php echo $index; ?>][url]" value="<?php echo esc_attr( $image['url'] ?? '' ); ?>" class="dicilo-url-input" style="width: 70%;" />
                         <button type="button" class="button dicilo-upload-btn">Seleccionar</button>
-                        <img src="<?php echo esc_url( $image['url'] ); ?>" class="dicilo-preview-img" style="<?php echo empty($image['url']) ? 'display:none;' : ''; ?>" />
+                        <img src="<?php echo esc_url( $image['url'] ?? '' ); ?>" class="dicilo-preview-img" style="<?php echo empty($image['url']) ? 'display:none;' : ''; ?>" />
                     </p>
-                    <p><input type="text" placeholder="Texto descriptivo" name="dicilo_gallery_images[<?php echo $index; ?>][text]" value="<?php echo esc_attr( $image['text'] ); ?>" style="width: 100%;" /></p>
-                    <p><input type="url" placeholder="Enlace URL (opcional)" name="dicilo_gallery_images[<?php echo $index; ?>][link]" value="<?php echo esc_attr( $image['link'] ); ?>" style="width: 100%;" /></p>
+
+                    <!-- Textos Multilingües -->
+                    <div class="dicilo-flex-row">
+                        <div class="dicilo-flex-col">
+                            <label>🇩🇪 Texto (Alemán):</label>
+                            <input type="text" name="dicilo_gallery_images[<?php echo $index; ?>][text_de]" value="<?php echo esc_attr( $image['text_de'] ?? $image['text'] ?? '' ); ?>" style="width: 100%;" />
+                        </div>
+                        <div class="dicilo-flex-col">
+                            <label>🇬🇧 Texto (Inglés):</label>
+                            <input type="text" name="dicilo_gallery_images[<?php echo $index; ?>][text_en]" value="<?php echo esc_attr( $image['text_en'] ?? '' ); ?>" style="width: 100%;" />
+                        </div>
+                        <div class="dicilo-flex-col">
+                            <label>🇪🇸 Texto (Español):</label>
+                            <input type="text" name="dicilo_gallery_images[<?php echo $index; ?>][text_es]" value="<?php echo esc_attr( $image['text_es'] ?? '' ); ?>" style="width: 100%;" />
+                        </div>
+                    </div>
+
+                    <!-- Enlaces Multilingües -->
+                    <div class="dicilo-flex-row">
+                        <div class="dicilo-flex-col">
+                            <label>🔗 Enlace Global (o 🇩🇪):</label>
+                            <input type="url" name="dicilo_gallery_images[<?php echo $index; ?>][link]" value="<?php echo esc_attr( $image['link'] ?? '' ); ?>" style="width: 100%;" />
+                        </div>
+                        <div class="dicilo-flex-col">
+                            <label>🔗 Enlace 🇬🇧 (Opcional):</label>
+                            <input type="url" name="dicilo_gallery_images[<?php echo $index; ?>][link_en]" value="<?php echo esc_attr( $image['link_en'] ?? '' ); ?>" style="width: 100%;" />
+                        </div>
+                        <div class="dicilo-flex-col">
+                            <label>🔗 Enlace 🇪🇸 (Opcional):</label>
+                            <input type="url" name="dicilo_gallery_images[<?php echo $index; ?>][link_es]" value="<?php echo esc_attr( $image['link_es'] ?? '' ); ?>" style="width: 100%;" />
+                        </div>
+                    </div>
+
                 </div>
                 <?php endforeach; ?>
             </div>
@@ -209,12 +243,21 @@ if ( ! class_exists( 'Dicilo_Gallery_Plugin' ) ) {
                     <h4>Imagen #<span class="row-num">{{id}}</span></h4>
                     <a href="#" class="dicilo-remove-row">Eliminar</a>
                     <p>
+                        <label><strong>URL de la Imagen:</strong></label><br>
                         <input type="text" name="dicilo_gallery_images[{{index}}][url]" value="" class="dicilo-url-input" style="width: 70%;" />
                         <button type="button" class="button dicilo-upload-btn">Seleccionar</button>
                         <img src="" class="dicilo-preview-img" style="display:none;" />
                     </p>
-                    <p><input type="text" placeholder="Texto descriptivo" name="dicilo_gallery_images[{{index}}][text]" value="" style="width: 100%;" /></p>
-                    <p><input type="url" placeholder="Enlace URL (opcional)" name="dicilo_gallery_images[{{index}}][link]" value="" style="width: 100%;" /></p>
+                    <div class="dicilo-flex-row">
+                        <div class="dicilo-flex-col"><label>🇩🇪 Texto (Alemán):</label><input type="text" name="dicilo_gallery_images[{{index}}][text_de]" value="" style="width: 100%;" /></div>
+                        <div class="dicilo-flex-col"><label>🇬🇧 Texto (Inglés):</label><input type="text" name="dicilo_gallery_images[{{index}}][text_en]" value="" style="width: 100%;" /></div>
+                        <div class="dicilo-flex-col"><label>🇪🇸 Texto (Español):</label><input type="text" name="dicilo_gallery_images[{{index}}][text_es]" value="" style="width: 100%;" /></div>
+                    </div>
+                    <div class="dicilo-flex-row">
+                        <div class="dicilo-flex-col"><label>🔗 Enlace Global (o 🇩🇪):</label><input type="url" name="dicilo_gallery_images[{{index}}][link]" value="" style="width: 100%;" /></div>
+                        <div class="dicilo-flex-col"><label>🔗 Enlace 🇬🇧 (Opcional):</label><input type="url" name="dicilo_gallery_images[{{index}}][link_en]" value="" style="width: 100%;" /></div>
+                        <div class="dicilo-flex-col"><label>🔗 Enlace 🇪🇸 (Opcional):</label><input type="url" name="dicilo_gallery_images[{{index}}][link_es]" value="" style="width: 100%;" /></div>
+                    </div>
                 </div>
             </script>
             <?php
@@ -234,9 +277,14 @@ if ( ! class_exists( 'Dicilo_Gallery_Plugin' ) ) {
                 foreach ( $_POST['dicilo_gallery_images'] as $image ) {
                     if ( ! empty( $image['url'] ) ) {
                         $sanitized_images[] = array(
-                            'url'  => esc_url_raw( $image['url'] ),
-                            'text' => sanitize_text_field( $image['text'] ),
-                            'link' => esc_url_raw( $image['link'] ),
+                            'url'     => esc_url_raw( $image['url'] ),
+                            'text_de' => sanitize_text_field( $image['text_de'] ?? '' ),
+                            'text_en' => sanitize_text_field( $image['text_en'] ?? '' ),
+                            'text_es' => sanitize_text_field( $image['text_es'] ?? '' ),
+                            'text'    => sanitize_text_field( $image['text'] ?? '' ), // Mantener para fallback
+                            'link'    => esc_url_raw( $image['link'] ?? '' ),
+                            'link_en' => esc_url_raw( $image['link_en'] ?? '' ),
+                            'link_es' => esc_url_raw( $image['link_es'] ?? '' ),
                         );
                     }
                 }
@@ -355,11 +403,30 @@ if ( ! class_exists( 'Dicilo_Gallery_Plugin' ) ) {
         private function render_single_item( $image, $show_text, $aspect ) {
             $style = ($aspect !== 'auto') ? 'aspect-ratio: ' . esc_attr($aspect) . ';' : '';
             
+            // 🌐 DETECCIÓN INTELIGENTE DE IDIOMA
+            $lang = substr( get_locale(), 0, 2 ); // Retorna 'de', 'en', 'es', etc.
+            if ( defined('ICL_LANGUAGE_CODE') ) {
+                $lang = ICL_LANGUAGE_CODE; // Soporte especial si usan WPML
+            }
+            
+            // Elegir el texto correcto según el idioma detectado
+            $display_text = '';
+            if ( $lang === 'en' && !empty($image['text_en']) ) $display_text = $image['text_en'];
+            elseif ( $lang === 'es' && !empty($image['text_es']) ) $display_text = $image['text_es'];
+            elseif ( !empty($image['text_de']) ) $display_text = $image['text_de']; // DE o prioridad si no hay otro
+            elseif ( !empty($image['text']) ) $display_text = $image['text']; // Soporte para galerías viejas
+
+            // Elegir el enlace correcto según el idioma detectado
+            $display_link = '';
+            if ( $lang === 'en' && !empty($image['link_en']) ) $display_link = $image['link_en'];
+            elseif ( $lang === 'es' && !empty($image['link_es']) ) $display_link = $image['link_es'];
+            elseif ( !empty($image['link']) ) $display_link = $image['link']; // Enlace general/DE si los otros están vacíos
+
             echo '<div class="dicilo-gallery-item" style="' . $style . '">';
-            if ( ! empty( $image['link'] ) ) echo '<a href="' . esc_url( $image['link'] ) . '" target="_blank">';
-            echo '<img src="' . esc_url( $image['url'] ) . '" alt="' . esc_attr( $image['text'] ) . '" />';
-            if ( $show_text && ! empty( $image['text'] ) ) echo '<div class="dicilo-gallery-text">' . esc_html( $image['text'] ) . '</div>';
-            if ( ! empty( $image['link'] ) ) echo '</a>';
+            if ( ! empty( $display_link ) ) echo '<a href="' . esc_url( $display_link ) . '" target="_blank">';
+            echo '<img src="' . esc_url( $image['url'] ) . '" alt="' . esc_attr( $display_text ) . '" />';
+            if ( $show_text && ! empty( $display_text ) ) echo '<div class="dicilo-gallery-text">' . esc_html( $display_text ) . '</div>';
+            if ( ! empty( $display_link ) ) echo '</a>';
             echo '</div>';
         }
 
@@ -375,7 +442,8 @@ if ( ! class_exists( 'Dicilo_Gallery_Plugin' ) ) {
                 $new_version = ltrim( $release->tag_name, 'v' );
                 $plugin_slug = plugin_basename( __FILE__ );
                 
-                if ( version_compare( $new_version, '3.1.1', '>' ) ) {
+                // Aseguramos de que el actualizador sepa que ahora estamos en la 3.2.0
+                if ( version_compare( $new_version, '3.2.0', '>' ) ) {
                     $obj = new stdClass();
                     $obj->slug = $plugin_slug;
                     $obj->new_version = $new_version;

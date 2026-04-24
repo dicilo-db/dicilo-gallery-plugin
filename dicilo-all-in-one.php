@@ -3,7 +3,7 @@
  * Plugin Name: Dicilo Gallery All-in-One
  * Plugin URI: https://dicilo.net
  * Description: Galería Multilingüe (DE, EN, ES), Formatos de imagen, Carrusel Automático, Compresión WebP y GitHub Updater.
- * Version: 3.2.0
+ * Version: 3.2.1
  * Author: Dicilo Architect
  * Author URI: https://dicilo.net
  * Text Domain: dicilo-gallery
@@ -442,8 +442,8 @@ if ( ! class_exists( 'Dicilo_Gallery_Plugin' ) ) {
                 $new_version = ltrim( $release->tag_name, 'v' );
                 $plugin_slug = plugin_basename( __FILE__ );
                 
-                // Aseguramos de que el actualizador sepa que ahora estamos en la 3.2.0
-                if ( version_compare( $new_version, '3.2.0', '>' ) ) {
+                // Aseguramos de que el actualizador sepa que ahora estamos en la 3.2.1
+                if ( version_compare( $new_version, '3.2.1', '>' ) ) {
                     $obj = new stdClass();
                     $obj->slug = $plugin_slug;
                     $obj->new_version = $new_version;
@@ -473,10 +473,15 @@ if ( ! class_exists( 'Dicilo_Gallery_Plugin' ) ) {
         }
 
         public function github_upgrader_source( $source, $remote_source, $upgrader ) {
+            global $wp_filesystem;
             if ( strpos( $source, DICILO_GITHUB_REPO ) !== false ) {
-                $new_source = trailingslashit( $remote_source ) . dirname( plugin_basename( __FILE__ ) );
-                rename( $source, $new_source );
-                return $new_source;
+                $plugin_folder = dirname( plugin_basename( __FILE__ ) );
+                if ( $plugin_folder === '.' ) return $source;
+                
+                $new_source = trailingslashit( $remote_source ) . $plugin_folder;
+                if ( $wp_filesystem->move( $source, $new_source, true ) ) {
+                    return trailingslashit( $new_source );
+                }
             }
             return $source;
         }
